@@ -16,7 +16,7 @@ import java.util.List;
 public class TodoAdapter implements TodoPort {
     private final RestTemplate restTemplate;
 
-    private static final String TODOS_URL = "https://jsonplaceholder.typicode.com/todos";
+    public static final String TODOS_URL = "https://jsonplaceholder.typicode.com/todos";
 
     @Override
     public TodoAggregate createTodo(CreateTodoUseCase useCase) {

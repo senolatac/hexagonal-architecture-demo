@@ -1,6 +1,7 @@
 package com.nar.hexademo.application.controller.endpoint;
 
 import com.nar.hexademo.application.controller.transfer.todo.CreateTodoRequestDto;
+import com.nar.hexademo.application.controller.transfer.todo.TodoResponseDto;
 import com.nar.hexademo.domain.usecasehandler.todo.CreateTodoUseCaseHandler;
 import com.nar.hexademo.domain.usecasehandler.todo.GetTodosUseCaseHandler;
 import jakarta.validation.Valid;
@@ -19,13 +20,13 @@ public class TodoController {
     @GetMapping("all")
     public ResponseEntity<?> getAllTodos() {
         var todos = getTodosUseCaseHandler.handle();
-        return ResponseEntity.ok(todos);
+        return ResponseEntity.ok(TodoResponseDto.fromAggregateList(todos));
     }
 
     @PostMapping
     public ResponseEntity<?> createTodo(@RequestBody @Valid CreateTodoRequestDto dto) {
         var todo = createTodoUseCaseHandler.handle(dto.toUseCase());
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(todo);
+                .body(TodoResponseDto.fromAggregate(todo));
     }
 }
