@@ -1,7 +1,7 @@
 package com.nar.hexademo.infra.adapters.todo;
 
 import com.nar.hexademo.domain.aggregate.todo.TodoAggregate;
-import com.nar.hexademo.domain.port.todo.TodoPort;
+import com.nar.hexademo.domain.port.todo.TodoRestPort;
 import com.nar.hexademo.domain.usecase.todo.CreateTodoUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
@@ -13,7 +13,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class TodoAdapter implements TodoPort {
+public class TodoRestAdapter implements TodoRestPort {
     private final RestTemplate restTemplate;
 
     public static final String TODOS_URL = "https://jsonplaceholder.typicode.com/todos";

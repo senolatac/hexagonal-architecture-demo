@@ -18,6 +18,7 @@ public class TodoResponseDto {
         return TodoResponseDto.builder()
                 .id(aggregate.getId())
                 .title(aggregate.getTitle())
+                .userId(aggregate.getUserId())
                 .completed(aggregate.getCompleted())
                 .build();
     }

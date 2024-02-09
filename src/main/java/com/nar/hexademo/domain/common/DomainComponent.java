@@ -1,4 +1,4 @@
-package com.nar.hexademo.domain;
+package com.nar.hexademo.domain.common;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
