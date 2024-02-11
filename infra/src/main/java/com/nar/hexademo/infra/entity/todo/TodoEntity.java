@@ -1,12 +1,9 @@
 package com.nar.hexademo.infra.entity.todo;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+@Getter
 @Entity
 @Builder
 @NoArgsConstructor
