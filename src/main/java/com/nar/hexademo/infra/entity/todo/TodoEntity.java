@@ -1,6 +1,5 @@
 package com.nar.hexademo.infra.entity.todo;
 
-import com.nar.hexademo.domain.aggregate.todo.TodoAggregate;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,13 +26,4 @@ public class TodoEntity {
 
     @Column(name = "completed", nullable = false)
     private Boolean completed;
-
-    public TodoAggregate toAggregate() {
-        return TodoAggregate.builder()
-                .id(id)
-                .title(title)
-                .userId(userId)
-                .completed(completed)
-                .build();
-    }
 }

@@ -4,6 +4,7 @@ import com.nar.hexademo.domain.aggregate.todo.TodoAggregate;
 import com.nar.hexademo.domain.port.todo.TodoDataPort;
 import com.nar.hexademo.domain.usecase.todo.CreateTodoUseCase;
 import com.nar.hexademo.infra.entity.todo.TodoEntity;
+import com.nar.hexademo.infra.mapper.todo.TodoMapper;
 import com.nar.hexademo.infra.repository.todo.TodoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,6 @@ public class TodoDataAdapter implements TodoDataPort {
                 .userId(useCase.getUserId())
                 .completed(useCase.getCompleted())
                 .build();
-        return todoRepository.save(entity).toAggregate();
+        return TodoMapper.INSTANCE.entityToAggregate(todoRepository.save(entity));
     }
 }
