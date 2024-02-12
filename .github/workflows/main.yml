@@ -15,8 +15,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: main
-          token: ${{ secrets.ACCESS_TOKEN }}
-          #ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          #token: ${{ secrets.ACCESS_TOKEN }}
+          ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
           repository: senolatac/sha-core
           #path: core
 
