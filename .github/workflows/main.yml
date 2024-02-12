@@ -12,15 +12,11 @@ jobs:
           distribution: 'zulu'
           java-version: 17
 
-      - uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
       - uses: actions/checkout@v4
         with:
           ref: main
           #token: ${{ secrets.ACCESS_TOKEN }}
-          ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh-key: ${{ secrets.PRIVATE_SSH_KEY }}
           repository: senolatac/sha-core
           #path: core
 
