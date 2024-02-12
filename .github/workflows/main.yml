@@ -8,6 +8,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: main
           ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
           repository: senolatac/sha-core
       - uses: actions/checkout@v4
