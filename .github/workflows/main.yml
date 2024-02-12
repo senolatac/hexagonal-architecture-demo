@@ -26,9 +26,9 @@ jobs:
           mvn -B package --file pom.xml
 
       - uses: actions/checkout@v4
-      - name: Build project with Maven
         with:
           path: main
+      - name: Build project with Maven
         run: |
           cd ./main
           mvn -B package --file pom.xml
