@@ -23,7 +23,7 @@ jobs:
       - name: Build project with Maven
         run: |
           cd ./core
-          mvn -B package --file pom.xml
+          mvn -B install --file pom.xml
 
       - uses: actions/checkout@v4
         with:
