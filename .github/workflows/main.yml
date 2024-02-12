@@ -6,19 +6,23 @@ jobs:
     name: Build and Test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: main
-          token: ${{ secrets.ACCESS_TOKEN }}
-          #ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
-          repository: senolatac/sha-core
-      - uses: actions/checkout@v4
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: 17
 
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          token: ${{ secrets.ACCESS_TOKEN }}
+          #ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          repository: senolatac/sha-core
+
+      - name: Build project with Maven
+        run: mvn -B package --file pom.xml
+
+      - uses: actions/checkout@v4
       - name: Build project with Maven
         run: mvn -B package --file pom.xml
 
