@@ -18,19 +18,17 @@ jobs:
           token: ${{ secrets.ACCESS_TOKEN }}
           #ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
           repository: senolatac/sha-core
-          path: core
+          #path: core
 
-      - name: Build project with Maven
+      - name: Install core project with Maven
         run: |
-          cd ./core
           mvn -B install --file pom.xml
 
       - uses: actions/checkout@v4
-        with:
-          path: main
+        #with:
+          #path: main
       - name: Build project with Maven
         run: |
-          cd ./main
           mvn -B package --file pom.xml
 
       - name: Generate JaCoCo Badge
