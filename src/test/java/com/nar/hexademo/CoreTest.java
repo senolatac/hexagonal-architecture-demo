@@ -9,6 +9,7 @@ public class CoreTest {
 
     @Test
     void test_multiply() {
+        //core dependency
         int r = NumberUtils.multiply(4, 5);
 
         assertThat(r).isEqualTo(20);
