@@ -52,9 +52,11 @@ class CreateTodoUseCaseHandlerTest {
                 .returns("new-title", TodoAggregate::getTitle)
                 .returns(1L, TodoAggregate::getUserId)
                 .returns(true, TodoAggregate::getCompleted);
+        assertThat(aggregate.toString()).isNotBlank();
         verify(todoEventFakeAdapter).publish(eventArgumentCaptor.capture());
         assertThat(eventArgumentCaptor.getValue()).isNotNull()
                 .returns(1L, CreateTodoEvent::getId)
                 .returns("new-title", CreateTodoEvent::getTitle);
+        assertThat(eventArgumentCaptor.getValue().toString()).isNotBlank();
     }
 }

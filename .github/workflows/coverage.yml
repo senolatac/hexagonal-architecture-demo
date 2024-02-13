@@ -1,10 +1,8 @@
-name: Measure coverage
-
-on:
-  pull_request:
+name: Coverage
+on: [pull_request]
 
 jobs:
-  build:
+  coverage:
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
@@ -27,6 +25,6 @@ jobs:
         with:
           paths: |
             ${{ github.workspace }}/**/target/site/jacoco/jacoco.xml
-          token: ${{ secrets.ACCESS_TOKEN }}
-          min-coverage-overall: 40
-          min-coverage-changed-files: 60
+          token: ${{ secrets.GITHUB_TOKEN }}
+          min-coverage-overall: 60
+          min-coverage-changed-files: 80
