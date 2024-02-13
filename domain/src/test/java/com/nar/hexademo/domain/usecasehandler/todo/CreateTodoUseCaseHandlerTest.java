@@ -57,5 +57,6 @@ class CreateTodoUseCaseHandlerTest {
         assertThat(eventArgumentCaptor.getValue()).isNotNull()
                 .returns(1L, CreateTodoEvent::getId)
                 .returns("new-title", CreateTodoEvent::getTitle);
+        assertThat(eventArgumentCaptor.getValue().toString()).isNotBlank();
     }
 }
