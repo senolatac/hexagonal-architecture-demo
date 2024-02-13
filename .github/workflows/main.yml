@@ -1,8 +1,9 @@
 name: Main
-on: [push]
+on: [push,pull_request]
 
 jobs:
   build_test:
+    if: github.event_name == 'push'
     name: Build and Test
     runs-on: ubuntu-latest
     steps:
@@ -16,6 +17,7 @@ jobs:
       - name: Build project with Maven
         run: mvn -B package --file pom.xml
   coverage:
+    needs: build_test
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     permissions:
