@@ -18,7 +18,7 @@ pipeline {
         stage('Build') {
             steps {
                 // Get some code from a GitHub repository
-                git branch: 'multi-module', credentialsId: 'my_app', url: 'https://github.com/senolatac/hexagonal-architecture-demo.git'
+                git credentialsId: 'my_app', url: 'https://github.com/senolatac/hexagonal-architecture-demo.git'
 
                 publishChecks name: 'docker-builder', status: 'QUEUED'
                 publishChecks name: 'build-test', title: 'Build and Test', status: 'QUEUED'
@@ -47,6 +47,9 @@ pipeline {
             }
         }
         stage('Build docker image'){
+            when {
+               branch "main"
+            }
             steps{
                 script{
                     publishChecks name: 'docker-builder', status: 'IN_PROGRESS'
@@ -64,6 +67,9 @@ pipeline {
             }
         }
         stage('Deploy to docker'){
+            when {
+               branch "main"
+            }
             steps{
                 script{
                     sh "docker stop springboot-deploy || true && docker rm springboot-deploy || true"
