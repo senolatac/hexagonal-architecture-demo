@@ -45,7 +45,7 @@ pipeline {
         }
         stage('Build docker image'){
             when {
-               branch "main"
+               branch "dev"
             }
             steps{
                 script{
@@ -65,7 +65,7 @@ pipeline {
         }
         stage('Deploy to docker'){
             when {
-               branch "main"
+               branch "dev"
             }
             steps{
                 script{
