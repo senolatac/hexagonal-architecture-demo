@@ -17,9 +17,6 @@ pipeline {
         }
         stage('Build') {
             steps {
-                // Get some code from a GitHub repository
-                git credentialsId: 'my_app', url: 'https://github.com/senolatac/hexagonal-architecture-demo.git'
-
                 publishChecks name: 'docker-builder', status: 'QUEUED'
                 publishChecks name: 'build-test', title: 'Build and Test', status: 'QUEUED'
 
