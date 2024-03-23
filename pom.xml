@@ -29,6 +29,13 @@
 		<module>infra</module>
 	</modules>
 
+	<scm>
+		<connection>scm:git:https://github.com/senolatac/hexagonal-architecture-demo.git</connection>
+		<url>https://github.com/senolatac/hexagonal-architecture-demo</url>
+		<developerConnection>scm:git:https://github.com/senolatac/hexagonal-architecture-demo.git</developerConnection>
+		<tag>HEAD</tag>
+	</scm>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
