@@ -44,6 +44,12 @@ class TodoControllerTest {
     private static final Long TODO_ID_1 = 1L;
 
     @Test
+    void getDemo_returnNotFound() throws Exception {
+        mockMvc.perform(get("/api/v1/demo/test"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     void getAllTodos_success() throws Exception {
         List<TodoAggregate> results = List.of(createAggregate());
 
