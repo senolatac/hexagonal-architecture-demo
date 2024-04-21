@@ -6,6 +6,7 @@ import com.nar.hexademo.domain.aggregate.todo.TodoAggregate;
 import com.nar.hexademo.domain.usecase.todo.CreateTodoUseCase;
 import com.nar.hexademo.domain.usecasehandler.todo.CreateTodoUseCaseHandler;
 import com.nar.hexademo.domain.usecasehandler.todo.GetTodosUseCaseHandler;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
@@ -42,6 +43,13 @@ class TodoControllerTest {
     private CreateTodoUseCaseHandler createTodoUseCaseHandler;
 
     private static final Long TODO_ID_1 = 1L;
+
+    @Test
+    @DisplayName("Return not found because it is different controller class")
+    void getDemoLogs_returnNotFound() throws Exception  {
+        mockMvc.perform(get("/api/v1/demo/test-log"))
+                .andExpect(status().isNotFound());
+    }
 
     @Test
     void getAllTodos_success() throws Exception {
