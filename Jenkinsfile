@@ -45,7 +45,7 @@ pipeline {
         }
         stage('SonarQube Analysis') {
           steps {
-            withSonarQubeEnv() {
+            withSonarQubeEnv(installationName: 'sha-sonar-server') {
                 sh "mvn clean verify sonar:sonar -Dsonar.projectKey=senolatac_hexagonal-architecture-demo_AY8f460f2jc0CCYcH4Ud"
             }
           }
