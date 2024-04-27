@@ -43,9 +43,16 @@ pipeline {
                 }
             }
         }
+        stage('SonarQube Analysis') {
+          steps {
+            withSonarQubeEnv(installationName: 'sha-sonar-server') {
+              sh 'mvn clean org.sonarsource.scanner.maven:sonar-maven-plugin:3.11.0.3922:sonar'
+            }
+          }
+        }
         stage('Build docker image'){
             when {
-               branch "dev"
+               branch "docker-dev"
             }
             steps{
                 script{
@@ -65,7 +72,7 @@ pipeline {
         }
         stage('Deploy to docker'){
             when {
-               branch "dev"
+               branch "docker-dev"
             }
             steps{
                 script{
