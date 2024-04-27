@@ -45,8 +45,8 @@ pipeline {
         }
         stage('SonarQube Analysis') {
           steps {
-            withSonarQubeEnv(installationName: 'sha-sonar-server') {
-              sh 'mvn clean org.sonarsource.scanner.maven:sonar-maven-plugin:3.11.0.3922:sonar'
+            withSonarQubeEnv() {
+                sh "mvn clean verify sonar:sonar -Dsonar.projectKey=senolatac_hexagonal-architecture-demo_AY8f460f2jc0CCYcH4Ud"
             }
           }
         }
