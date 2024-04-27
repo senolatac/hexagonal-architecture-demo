@@ -19,8 +19,7 @@ import java.util.List;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -47,6 +46,8 @@ class TodoControllerTest {
     void getDemo_returnNotFound() throws Exception {
         mockMvc.perform(get("/api/v1/demo/test"))
                 .andExpect(status().isNotFound());
+
+        verify(getTodosUseCaseHandler, times(0)).handle();
     }
 
     @Test
@@ -96,6 +97,8 @@ class TodoControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(status().is4xxClientError());
+
+        verify(createTodoUseCaseHandler, times(0)).handle(any());
     }
 
     private TodoAggregate createAggregate() {

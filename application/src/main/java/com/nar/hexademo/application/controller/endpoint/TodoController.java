@@ -22,11 +22,11 @@ public class TodoController {
     private final CreateTodoUseCaseHandler createTodoUseCaseHandler;
 
     @Value("${custom.variable}")
-    private String CUSTOM_VALUE;
+    private String customValue;
 
     @GetMapping("test")
     public ResponseEntity<String> testEnvVal() {
-        return ResponseEntity.ok(CUSTOM_VALUE);
+        return ResponseEntity.ok(customValue);
     }
 
     @GetMapping("all")
