@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("api/v1/todos")
 @RequiredArgsConstructor
@@ -23,18 +25,18 @@ public class TodoController {
     private String CUSTOM_VALUE;
 
     @GetMapping("test")
-    public ResponseEntity<?> testEnvVal() {
+    public ResponseEntity<String> testEnvVal() {
         return ResponseEntity.ok(CUSTOM_VALUE);
     }
 
     @GetMapping("all")
-    public ResponseEntity<?> getAllTodos() {
+    public ResponseEntity<List<TodoResponseDto>> getAllTodos() {
         var todos = getTodosUseCaseHandler.handle();
         return ResponseEntity.ok(TodoMapper.INSTANCE.aggregateListToTodoResponseDtoList(todos));
     }
 
     @PostMapping
-    public ResponseEntity<?> createTodo(@RequestBody @Valid CreateTodoRequestDto dto) {
+    public ResponseEntity<TodoResponseDto> createTodo(@RequestBody @Valid CreateTodoRequestDto dto) {
         var todo = createTodoUseCaseHandler.handle(TodoMapper.INSTANCE.createTodoRequestDtoToUseCase(dto));
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(TodoMapper.INSTANCE.aggregateToTodoResponseDto(todo));
