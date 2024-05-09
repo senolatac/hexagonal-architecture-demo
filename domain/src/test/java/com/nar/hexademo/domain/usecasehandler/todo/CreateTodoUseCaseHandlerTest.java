@@ -45,7 +45,7 @@ class CreateTodoUseCaseHandlerTest {
                 .completed(true)
                 .build();
 
-        var aggregate = useCaseHandler.handle(useCase);
+        TodoAggregate aggregate = useCaseHandler.handle(useCase);
 
         assertThat(aggregate).isNotNull()
                 .returns(1L, TodoAggregate::getId)

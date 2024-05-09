@@ -5,7 +5,7 @@ import com.nar.hexademo.domain.port.todo.TodoDataPort;
 import com.nar.hexademo.domain.usecase.todo.CreateTodoUseCase;
 import com.nar.hexademo.infra.entity.todo.TodoEntity;
 import com.nar.hexademo.infra.mapper.todo.TodoMapper;
-import com.nar.hexademo.infra.repository.todo.TodoRepository;
+import com.nar.hexademo.infra.jpa.repository.todo.TodoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

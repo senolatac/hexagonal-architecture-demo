@@ -3,7 +3,7 @@ package com.nar.hexademo.infra.adapters.todo;
 import com.nar.hexademo.domain.aggregate.todo.TodoAggregate;
 import com.nar.hexademo.domain.usecase.todo.CreateTodoUseCase;
 import com.nar.hexademo.infra.entity.todo.TodoEntity;
-import com.nar.hexademo.infra.repository.todo.TodoRepository;
+import com.nar.hexademo.infra.jpa.repository.todo.TodoRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

@@ -6,6 +6,7 @@ import com.nar.hexademo.domain.usecase.todo.CreateTodoUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -20,7 +21,7 @@ public class TodoRestAdapter implements TodoRestPort {
 
     @Override
     public TodoAggregate createTodo(CreateTodoUseCase useCase) {
-        var response = restTemplate.postForEntity(TODOS_URL, useCase, TodoAggregate.class);
+        ResponseEntity<TodoAggregate> response = restTemplate.postForEntity(TODOS_URL, useCase, TodoAggregate.class);
 
         if (response.getBody() == null) {
             throw new RuntimeException("Unexpected response..."); //specify Exception
@@ -31,7 +32,7 @@ public class TodoRestAdapter implements TodoRestPort {
     @Override
     public List<TodoAggregate> getAllTodos() {
         ParameterizedTypeReference<List<TodoAggregate>> responseType = new ParameterizedTypeReference<>() {};
-        var response = restTemplate.exchange(TODOS_URL, HttpMethod.GET, null, responseType);
+        ResponseEntity<List<TodoAggregate>> response = restTemplate.exchange(TODOS_URL, HttpMethod.GET, null, responseType);
 
         if (response.getBody() == null) {
             throw new RuntimeException("Unexpected response..."); //specify Exception

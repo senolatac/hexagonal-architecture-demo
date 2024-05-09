@@ -3,6 +3,7 @@ package com.nar.hexademo.domain.usecasehandler.todo;
 
 import com.nar.hexademo.domain.common.DomainComponent;
 import com.nar.hexademo.domain.event.todo.CreateTodoEvent;
+import com.nar.hexademo.domain.mapper.DomainTodoMapper;
 import com.nar.hexademo.domain.port.todo.TodoRestPort;
 import com.nar.hexademo.domain.aggregate.todo.TodoAggregate;
 import com.nar.hexademo.domain.port.todo.TodoDataPort;
@@ -21,7 +22,7 @@ public class CreateTodoUseCaseHandler {
         validate(useCase);
         TodoAggregate todoAggregate = todoRestPort.createTodo(useCase);
         todoDataPort.save(useCase);
-        todoEventPort.publish(CreateTodoEvent.from(todoAggregate));
+        todoEventPort.publish(DomainTodoMapper.INSTANCE.aggregateToEvent(todoAggregate));
 
         return todoAggregate;
     }

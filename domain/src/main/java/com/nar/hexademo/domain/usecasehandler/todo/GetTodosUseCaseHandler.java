@@ -13,8 +13,6 @@ public class GetTodosUseCaseHandler {
     private final TodoRestPort todoRestPort;
 
     public List<TodoAggregate> handle() {
-        //validate(useCase);
-
         return todoRestPort.getAllTodos();
     }
 }

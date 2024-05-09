@@ -1,8 +1,11 @@
 package com.nar.hexademo.domain.usecasehandler.todo;
 
 import com.nar.hexademo.domain.adapters.TodoRestFakeAdapter;
+import com.nar.hexademo.domain.aggregate.todo.TodoAggregate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -18,7 +21,7 @@ class GetTodosUseCaseHandlerTest {
 
     @Test
     void handle_success() {
-        var result = useCaseHandler.handle();
+        List<TodoAggregate> result = useCaseHandler.handle();
 
         assertThat(result).hasSize(3);
         assertThat(result.get(0).getTitle()).isEqualTo("test-title-1");

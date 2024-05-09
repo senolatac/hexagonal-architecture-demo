@@ -3,6 +3,7 @@ package com.nar.hexademo.application.controller.endpoint;
 import com.nar.hexademo.application.controller.mapper.todo.TodoMapper;
 import com.nar.hexademo.application.controller.transfer.todo.CreateTodoRequestDto;
 import com.nar.hexademo.application.controller.transfer.todo.TodoResponseDto;
+import com.nar.hexademo.domain.aggregate.todo.TodoAggregate;
 import com.nar.hexademo.domain.usecasehandler.todo.CreateTodoUseCaseHandler;
 import com.nar.hexademo.domain.usecasehandler.todo.GetTodosUseCaseHandler;
 import jakarta.validation.Valid;
@@ -31,13 +32,13 @@ public class TodoController {
 
     @GetMapping("all")
     public ResponseEntity<List<TodoResponseDto>> getAllTodos() {
-        var todos = getTodosUseCaseHandler.handle();
+        List<TodoAggregate> todos = getTodosUseCaseHandler.handle();
         return ResponseEntity.ok(TodoMapper.INSTANCE.aggregateListToTodoResponseDtoList(todos));
     }
 
     @PostMapping
     public ResponseEntity<TodoResponseDto> createTodo(@RequestBody @Valid CreateTodoRequestDto dto) {
-        var todo = createTodoUseCaseHandler.handle(TodoMapper.INSTANCE.createTodoRequestDtoToUseCase(dto));
+        TodoAggregate todo = createTodoUseCaseHandler.handle(TodoMapper.INSTANCE.createTodoRequestDtoToUseCase(dto));
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(TodoMapper.INSTANCE.aggregateToTodoResponseDto(todo));
     }
