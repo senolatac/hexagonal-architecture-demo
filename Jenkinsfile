@@ -6,6 +6,12 @@ pipeline {
         maven "Maven3"
     }
 
+    environment {
+        APPLICATION_SOURCE_JAR_PATH = "${env.WORKSPACE}/application/target/application.jar"
+        APPLICATION_TARGET_DIR_PATH = "/var/jenkins_home/latest_build"
+        APPLICATION_TARGET_JAR_PATH = "${APPLICATION_TARGET_DIR_PATH}/application.jar"
+    }
+
     stages {
         stage('Initialize'){
             steps {
@@ -31,6 +37,8 @@ pipeline {
                 // If Maven was able to run the tests, even if some of the test
                 // failed, record the test results and archive the jar file.
                 success {
+                    sh "mkdir -p ${APPLICATION_TARGET_DIR_PATH}"
+                    sh "cp -rp ${APPLICATION_SOURCE_JAR_PATH} ${APPLICATION_TARGET_JAR_PATH}"
                     publishChecks name: 'build-test'
                     archiveArtifacts '**/target/*.jar'
                 }
