@@ -12,7 +12,7 @@ pipeline {
         APPLICATION_LOCAL_JAR_PATH = "application/target/${APPLICATION_JAR_NAME}"
         APPLICATION_SOURCE_JAR_PATH = "${env.WORKSPACE}/${APPLICATION_LOCAL_JAR_PATH}"
 
-        DOCKER_REGISTRY = "hub.docker.com"
+        DOCKER_REGISTRY = "registry-1.docker.io"
     }
 
     stages {
