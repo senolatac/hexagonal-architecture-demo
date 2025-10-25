@@ -1,0 +1,104 @@
+pipeline {
+    agent { label 'master' }
+
+    tools {
+        // Install the Maven version configured as "Maven3" and add it to the path.
+        maven "Maven3"
+    }
+
+    environment {
+        APPLICATION_MODULE = "hexa-demo-application"
+        APPLICATION_JAR_NAME = "${APPLICATION_MODULE}.jar"
+        APPLICATION_LOCAL_JAR_PATH = "application/target/${APPLICATION_JAR_NAME}"
+        APPLICATION_SOURCE_JAR_PATH = "${env.WORKSPACE}/${APPLICATION_LOCAL_JAR_PATH}"
+
+        DOCKER_REGISTRY = "hub.docker.com"
+    }
+
+    stages {
+        stage('Initialize'){
+            steps {
+                script {
+                    def dockerHome = tool 'Docker'
+                    env.PATH = "${dockerHome}/bin:${env.PATH}"
+                }
+            }
+        }
+        stage('Build and Test') {
+            steps {
+                script {
+                    sh 'mvn -Dmaven.test.failure.ignore=false clean package'
+                }
+            }
+        }
+        stage('Coverage') {
+              when {
+                  not {
+                     anyOf {
+                       branch 'master'
+                     }
+                  }
+              }
+            steps {
+                script {
+                    jacoco()
+                }
+            }
+        }
+        stage('Build Docker Image') {
+            when {
+                anyOf {
+                    branch 'dev'
+                    branch pattern: 'hot-fix/.*', comparator: 'REGEXP'
+                    branch 'master'
+                }
+            }
+            steps {
+                script {
+                    // Get version from pom.xml
+                    def version = sh(
+                        script: "mvn help:evaluate -Dexpression=project.version -q -DforceStdout",
+                        returnStdout: true
+                    ).trim()
+
+                    def currentBranch = env.BRANCH_NAME
+
+                    def postfix = ""
+
+                    if (currentBranch == 'dev' && isSnapshot) {
+                        postfix = "-deval"
+                    }
+
+                    // Get docker registry from environment variable
+                    def dockerRegistry = env.DOCKER_REGISTRY
+                    def imageName = "${dockerRegistry}/${APPLICATION_MODULE}:${version}${postfix}"
+
+                    // Copy JAR to Docker build context
+                    sh """
+                        cp ${APPLICATION_LOCAL_JAR_PATH} ./${APPLICATION_JAR_NAME}
+                    """
+
+                    // Build and push Docker image with credentials
+                    withCredentials([usernamePassword(
+                        credentialsId: 'nar-registry-creds',
+                        usernameVariable: 'DOCKER_USER',
+                        passwordVariable: 'DOCKER_PASS'
+                    )]) {
+                        sh """
+                            echo \${DOCKER_PASS} | docker login ${dockerRegistry} -u \${DOCKER_USER} --password-stdin
+                            docker build -t ${imageName} .
+                            docker push ${imageName}
+                            docker logout ${dockerRegistry}
+                        """
+                    }
+
+                    // Clean up JAR from build context
+                    sh "rm -f ./${APPLICATION_JAR_NAME}"
+
+                    echo "Docker image built and pushed: ${imageName}"
+                }
+            }
+        }
+
+    }
+}
