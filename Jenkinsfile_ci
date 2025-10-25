@@ -13,6 +13,7 @@ pipeline {
         APPLICATION_SOURCE_JAR_PATH = "${env.WORKSPACE}/${APPLICATION_LOCAL_JAR_PATH}"
 
         DOCKER_REGISTRY = "registry-1.docker.io"
+        DOCKER_DOMAIN = "satac"
     }
 
     stages {
@@ -71,7 +72,7 @@ pipeline {
 
                     // Get docker registry from environment variable
                     def dockerRegistry = env.DOCKER_REGISTRY
-                    def imageName = "${dockerRegistry}/${APPLICATION_MODULE}:${version}${postfix}"
+                    def imageName = "${DOCKER_DOMAIN}/${APPLICATION_MODULE}:${version}${postfix}"
 
                     // Copy JAR to Docker build context
                     sh """
