@@ -27,7 +27,7 @@ pipeline {
             groovyScript: '''
                 import groovy.json.JsonSlurper
 
-                def harborUrl = "${HARBOR_API_URL}"
+                def harborUrl = "https://hub.docker.com/v2/repositories/${params.PROJECT_REPOSITORY}/hexa-demo-application/tags?page_size=1000"
 
                 def tags = []
                 try {
