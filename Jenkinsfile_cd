@@ -1,0 +1,96 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_REGISTRY = "docker.io"
+        HARBOR_API_URL = "https://hub.docker.com/v2/repositories/satac/hexa-demo-application/tags?page_size=1000"
+        HARBOR_PROJECT = "satac"
+        HARBOR_REPOSITORY = "satac/hexa-demo-application"
+    }
+
+    parameters {
+        choice(
+            name: 'PROJECT_REPOSITORY',
+            choices: [
+                "satac",
+                "aril"
+            ],
+            description: 'Select the project repository'
+        )
+
+        // This will be populated dynamically based on PROJECT_REPOSITORY selection
+        // Requires Active Choices Plugin or Extended Choice Parameter Plugin
+        extendedChoice(
+            name: 'IMAGE_TAG',
+            type: 'PT_SINGLE_SELECT',
+            description: 'Select image tag to deploy (populated based on repository selection)',
+            groovyScript: '''
+                import groovy.json.JsonSlurper
+
+                def harborUrl = "${HARBOR_API_URL}"
+
+                def tags = []
+                try {
+                    def proc
+                    withCredentials([usernamePassword(credentialsId: 'nar-registry-creds', usernameVariable: 'HUSER', passwordVariable: 'HPASS')]) {
+                            def command = ["curl", "-u" ,"$HUSER:$HPASS", "-s", "-k",
+                                           "-H", "Accept: application/json",
+                                           harborUrl]
+                            proc = command.execute()
+                            proc.waitFor()
+                    }
+
+                    if (proc.exitValue() == 0) {
+                        def json = new JsonSlurper().parseText(proc.text)
+                        json.results.each { artifact ->
+                            tags.add(artifact.name)
+                        }
+                    }
+                } catch (Exception e) {
+                    return ["Error: ${e.message}", "latest"]
+                }
+
+                return tags ?: ["latest", "No tags found"]
+            '''
+        )
+
+        choice(
+            name: 'DEPLOYMENT_TARGET_ENV',
+            choices: ['dg-dev', 'dg-stage', 'dedas-uat', 'dg-prod'],
+            description: 'Select target deployment environment'
+        )
+    }
+
+    stages {
+        stage('Initialize') {
+            steps {
+                script {
+                    echo "╔════════════════════════════════════════════════════════╗"
+                    echo "║         DEPLOYMENT CONFIGURATION                        ║"
+                    echo "╚════════════════════════════════════════════════════════╝"
+                    echo "Repository    : ${params.PROJECT_REPOSITORY}"
+                    echo "Image Tag     : ${params.IMAGE_TAG}"
+                    echo "Environment   : ${params.DEPLOYMENT_TARGET_ENV}"
+                    echo ""
+
+                    // Validate parameters
+                    if (!params.IMAGE_TAG) {
+                        error("IMAGE_TAG is required. Please select a valid image tag.")
+                    }
+
+                    // Set application module from repository
+                    env.APPLICATION_MODULE = params.PROJECT_REPOSITORY.split('/')[1]
+                    env.DOCKER_IMAGE = "${DOCKER_REGISTRY}/${params.PROJECT_REPOSITORY}:${params.IMAGE_TAG}"
+
+                    // Get env file ID based on environment
+                    env.DOCKER_ENV_FILE_ID = getDockerEnvFileId(params.DEPLOYMENT_TARGET_ENV)
+                    env.APP_ENV_FILE_ID = getAppEnvFileId(params.DEPLOYMENT_TARGET_ENV)
+
+                    echo "Application   : ${env.APPLICATION_MODULE}"
+                    echo "Docker Image  : ${env.DOCKER_IMAGE}"
+                    echo "Docker Env File ID   : ${env.DOCKER_ENV_FILE_ID}"
+                }
+            }
+        }
+    }
+}
