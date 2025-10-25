@@ -2,7 +2,6 @@ pipeline {
     agent any
 
     tools {
-        // Install the Maven version configured as "Maven3" and add it to the path.
         maven "Maven3"
     }
 
@@ -11,13 +10,10 @@ pipeline {
         APPLICATION_JAR_NAME = "${APPLICATION_MODULE}.jar"
         APPLICATION_LOCAL_JAR_PATH = "application/target/${APPLICATION_JAR_NAME}"
         APPLICATION_SOURCE_JAR_PATH = "${env.WORKSPACE}/${APPLICATION_LOCAL_JAR_PATH}"
-
-        DOCKER_REGISTRY = "registry-1.docker.io"
-        DOCKER_DOMAIN = "satac"
     }
 
     stages {
-        stage('Initialize'){
+        stage('Initialize') {
             steps {
                 script {
                     def dockerHome = tool 'Docker'
@@ -25,28 +21,21 @@ pipeline {
                 }
             }
         }
+
         stage('Build and Test') {
             steps {
-                script {
-                    sh 'mvn -Dmaven.test.failure.ignore=false clean package'
-                }
+                sh 'mvn -Dmaven.test.failure.ignore=false clean package'
             }
         }
+
         stage('Coverage') {
-              when {
-                  not {
-                     anyOf {
-                       branch 'master'
-                     }
-                  }
-              }
+            when { not { branch 'master' } }
             steps {
-                script {
-                    jacoco()
-                }
+                jacoco()
             }
         }
-        stage('Build Docker Image') {
+
+        stage('Build and Push Docker Image') {
             when {
                 anyOf {
                     branch 'dev'
@@ -56,50 +45,33 @@ pipeline {
             }
             steps {
                 script {
-                    // Get version from pom.xml
                     def version = sh(
                         script: "mvn help:evaluate -Dexpression=project.version -q -DforceStdout",
                         returnStdout: true
                     ).trim()
-
                     def currentBranch = env.BRANCH_NAME
+                    def postfix = currentBranch == 'dev' ? "-deval" : ""
 
-                    def postfix = ""
-
-                    if (currentBranch == 'dev' && isSnapshot) {
-                        postfix = "-deval"
-                    }
-
-                    // Get docker registry from environment variable
-                    def dockerRegistry = env.DOCKER_REGISTRY
-                    def imageName = "${DOCKER_DOMAIN}/${APPLICATION_MODULE}:${version}${postfix}"
-
-                    // Copy JAR to Docker build context
-                    sh """
-                        cp ${APPLICATION_LOCAL_JAR_PATH} ./${APPLICATION_JAR_NAME}
-                    """
-
-                    // Build and push Docker image with credentials
                     withCredentials([usernamePassword(
                         credentialsId: 'nar-registry-creds',
                         usernameVariable: 'DOCKER_USER',
                         passwordVariable: 'DOCKER_PASS'
                     )]) {
+                        def imageName = "${DOCKER_USER}/${APPLICATION_MODULE}:${version}${postfix}"
                         sh """
-                            docker login ${dockerRegistry} -u \${DOCKER_USER} -p \${DOCKER_PASS}
+                            echo "Building Docker image: ${imageName}"
+                            cp ${APPLICATION_LOCAL_JAR_PATH} ./${APPLICATION_JAR_NAME}
+                            docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}
                             docker build -t ${imageName} .
                             docker push ${imageName}
-                            docker logout ${dockerRegistry}
+                            docker logout
+                            rm -f ./${APPLICATION_JAR_NAME}
                         """
                     }
 
-                    // Clean up JAR from build context
-                    sh "rm -f ./${APPLICATION_JAR_NAME}"
-
-                    echo "Docker image built and pushed: ${imageName}"
+                    echo "✅ Docker image built and pushed successfully."
                 }
             }
         }
-
     }
 }
